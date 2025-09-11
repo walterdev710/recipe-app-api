@@ -6,7 +6,7 @@ on: [push] # That's the trigger
 jobs:
   test-lint: 
     name: Test and Lint
-    runs-on: ubuntu-latest # The runner is basically operating system that we're gonna to be running the job on
+    runs-on: ubuntu-latest # The runner is basically operating system that we're going to be running the job on
     steps:
       - name: Setup Docker Compose
         run: |
@@ -19,9 +19,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Test
-        run: docker-compose run --rm app sh -c "python manage.py test"
+        run: docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
+        
       - name: Linting
         run: docker-compose run --rm app sh -c "flake8"
